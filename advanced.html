@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Search</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+        <link href="static/styles.css" rel="stylesheet">
+    </head>
+
+	<body>
+		<nav class="nav justify-content-end">
+			<a class="nav-link" href="index.html">Google Search</a>
+		</nav>
+		<main>		
+			<center>
+				<img src="./googlelogo_color_272x92dp.png" style="padding-top:100px">
+			</center>
+			<div class="row">
+				<label id='adv'> Advanced Search</label>
+			</div>
+				<div class="row">
+					<label class="col-2"><span id="findPages">Find pages with...</span></label>
+				</div>
+			<div class="formulaire">
+				<form action="https://google.com/search">
+
+					<div class="form-group row row-query">
+						<label class="col-2">all these words:</label>
+						<div class="col-4">
+							<input type="text" class="form-control rounded-0" id="allTheseWords" name="as_q">
+						</div>
+						<label class="col-4 align-middle">Type the important words:  <span class="mono">tricolor rat terrier</span></label>
+					</div>
+					<div class="form-group row row-query">
+						<label class="col-2">this exact word or phrase:</label>
+						<div class="col-4">
+							<input type="text" class="form-control rounded-0" id="exactWordPhrase" name="as_epq">
+						</div>
+						<label class="col-4 align-middle">Put exact words in quotes: <span class="mono">"rat terrier"</span></label>
+					</div>
+					<div class="form-group row row-query">
+						<label class="col-2">any of these words: </label>
+						<div class="col-4">
+							<input type="text" class="form-control rounded-0" id="anyWords" name="as_oq">
+						</div>
+						<label class="col-4">Type <span class="mono">OR</span> between all the words you want: <span class="mono">miniature OR standard</span></label>
+					</div>
+					<div class="form-group row row-query">
+						<label class="col-2">none of these words: </label>
+						<div class="col-4">
+							<input type="text" class="form-control rounded-0" id="noneWords" name="as_eq">
+						</div>
+						<label class="col-4">Put a minus sign just before words you don't want:  <span class="mono">-rodent, -"Jack Russell"</span>
+					</div>
+					
+
+					<div class="form-group row row-query">
+						<label class="col-2">&nbsp</label>
+						<div class="col-4 pull-right">
+							<button class="btn btn-primary pull-right" type="submit">Advanced Search</button>
+						</div>
+					</div>        
+				</form>
+	</div>
+				
+				
+				
+			</div>
+		</main>
+	</body>
+</html>
