@@ -1,5 +1,5 @@
 # Project 1 - WIKI
-Project part of the CS50w "Web programming with Python and Javascript"
+Project part of the (CS50w "Web programming with Python and Javascript")[https://cs50.harvard.edu/web/2020/] online class.
 
 ## Specification
 
