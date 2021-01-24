@@ -1,0 +1,20 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Search {{ entree }}
+{% endblock %}
+
+
+{% block body %}
+    <h1>All Results :</h1>
+        <ul>
+        {% for result in results %}
+
+            <li><a href="/wiki/{{result}}">{{ result }}</a></li>
+        {% empty %}
+            Sorry, there is no result for "{{ entree }}".
+            Would you like to create this entry ?
+        {% endfor %}
+        </ul>
+
+{% endblock %}
