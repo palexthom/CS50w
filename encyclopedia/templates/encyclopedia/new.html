@@ -6,7 +6,7 @@
 
 {% block body %}
 
-        <form action="/wiki/new/" method="post">
+        <form action="/wiki/new/" method="post">{% csrf_token %}
             <div>
                 <input class="new" type="text" name="title" placeholder="Title">
             </div>

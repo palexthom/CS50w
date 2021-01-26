@@ -11,7 +11,6 @@ def index(request):
 
 
 def entry(request, entree):
-
     code = util.get_entry(entree)
     if code is not None:
         return render(request, "encyclopedia/entry.html", {
@@ -20,12 +19,14 @@ def entry(request, entree):
             })
     else:
         return render(request, "encyclopedia/apology1.html", {
-            "message": f"Article '{entree}' doesn't exist."
+            "message": f"Article '{entree}' doesn't exist.",
+            "suggestion": "Would you like to  ",
+            "link_url": f"/wiki/new/",
+            "link_name": f"create {entree} ?"
         })
 
 
 def search(request):
-    template_name = 'search.html'
     query = request.GET.get('q').lower()
 
     results = []
@@ -43,11 +44,29 @@ def search(request):
 
 
 def new(request):
-    return render(request, "encyclopedia/new.html")
+    if request.method == 'GET':
+        return render(request, "encyclopedia/new.html")
+
+    elif request.method == 'POST':
+        entry_name = request.POST.get('title')
+        content = request.POST.get('content')
+        entries = [entry.lower() for entry in util.list_entries()]
+
+        if entry_name.lower() not in entries:
+            util.save_entry(entry_name, content)
+            return redirect(f"/wiki/{entry_name}")
+        else:
+            return render(request, "encyclopedia/apology1.html", {
+                "message": f"Entry '{entry_name}' already exists!.",
+                "suggestion": "Visit entry ",
+                "link_url": f"/wiki/{entry_name}",
+                "link_name": f"{entry_name} ?"
+            })
 
 
-def rand_entry():
+def rand_entry(request):
     entries = util.list_entries()
+    print(entries)
     if entries is not None:
         entry_name = entries[random.randrange(len(entries))]
         return redirect(f"/wiki/{entry_name}")
