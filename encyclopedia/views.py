@@ -64,9 +64,26 @@ def new(request):
             })
 
 
+def edit(request, entree):
+    if request.method == 'GET':
+        entries = util.list_entries()
+        if entree in entries:
+            return render(request, "encyclopedia/edit.html", {
+                "entry_name": entree,
+                "content": util.get_entry(entree)
+            })
+
+    elif request.method == 'POST':
+        entry_name = request.POST.get('title')
+        content = request.POST.get('content')
+
+        util.save_entry(entry_name, content)
+        return redirect(f"/wiki/{entry_name}")
+
+
+
 def rand_entry(request):
     entries = util.list_entries()
-    print(entries)
     if entries is not None:
         entry_name = entries[random.randrange(len(entries))]
         return redirect(f"/wiki/{entry_name}")
