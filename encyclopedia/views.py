@@ -1,6 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import markdown2
-
+import random
 from . import util
 
 
@@ -36,12 +36,20 @@ def search(request):
             if query in entry.lower():
                 results.append(entry)
 
-    print("prout")
-    for result in results:
-        print(result)
-
     return render(request, "encyclopedia/search.html", {
         "entree": query,
         "results": results
     })
+
+
+def new(request):
+    return render(request, "encyclopedia/new.html")
+
+
+def rand_entry():
+    entries = util.list_entries()
+    if entries is not None:
+        entry_name = entries[random.randrange(len(entries))]
+        return redirect(f"/wiki/{entry_name}")
+
 

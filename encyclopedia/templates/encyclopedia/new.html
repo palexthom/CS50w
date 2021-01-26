@@ -1,0 +1,23 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Wiki - New
+{% endblock %}
+
+{% block body %}
+
+        <form action="/wiki/new/" method="post">
+            <div>
+                <input class="new" type="text" name="title" placeholder="Title">
+            </div>
+            <div>
+                <textarea class="content" name="content" placeholder="Type here the new encyclopedia entry, using the markdown syntax..."></textarea>
+            </div>
+            <div>
+                <button>Save Page</button>
+            </div>
+
+        </form>
+
+
+{% endblock %}
