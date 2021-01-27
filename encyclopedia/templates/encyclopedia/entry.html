@@ -8,5 +8,5 @@
     {% autoescape off %}
         {{ entry }}
     {% endautoescape %}
-    <a href="{{entree}}/edit/">Edit entry.</a>
+    <a href="{% url 'edit' entree %}"> Edit this page </a>
 {% endblock %}

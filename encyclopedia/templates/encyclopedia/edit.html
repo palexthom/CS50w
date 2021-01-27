@@ -6,7 +6,7 @@
 
 {% block body %}
 
-        <form action="/wiki/{{entry_name}}/edit/" method="post">{% csrf_token %}
+        <form action="{url 'edit' entry_name}" method="post">{% csrf_token %}
             <div>
                 <input class="edit" type="text" name="title" value="{{entry_name}}" readonly>
             </div>

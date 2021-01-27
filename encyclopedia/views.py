@@ -81,7 +81,6 @@ def edit(request, entree):
         return redirect(f"/wiki/{entry_name}")
 
 
-
 def rand_entry(request):
     entries = util.list_entries()
     if entries is not None:
