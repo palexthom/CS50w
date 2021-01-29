@@ -22,7 +22,7 @@ def entry(request, entree):
             "message": f"Article '{entree}' doesn't exist.",
             "suggestion": "Would you like to  ",
             "link_url": f"/wiki/new/",
-            "link_name": f"create {entree} ?"
+            "link_name": f"create this Page ?"
         })
 
 

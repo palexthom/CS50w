@@ -13,7 +13,7 @@
             <li><a href="/wiki/{{result}}">{{ result }}</a></li>
         {% empty %}
             Sorry, there is no result for "{{ entree }}".
-            Would you like to create this entry ?
+            Would you like to <a href="{% url 'new' %}">create this Page</a> ?
         {% endfor %}
         </ul>
 
