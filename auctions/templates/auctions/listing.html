@@ -1,0 +1,106 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<h2> {{listing.brand}} - {{listing.title}} {% if not open %} [Closed - bid won by '{{listing.won_bid}}'] {% endif %}</h2>
+
+
+<ul class="nav">
+    {% if user.is_authenticated %}
+        {% if watched %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'manage_watchlist' listing_id=listing.id %}">Remove from watchlist</a>
+            </li>
+        {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'manage_watchlist' listing_id=listing.id %}">Add to watchlist</a>
+            </li>
+        {% endif %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'register' %}">Bid on this item</a>
+        </li>
+        {% if author and open %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'close' listing_id=listing.id %}">Close this bid</a>
+            </li>
+        {% endif %}
+    {% else %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'register' %}">Register</a>
+        </li>
+    {% endif %}
+</ul>
+
+<table class="table">
+    <tbody>
+        <tr>
+            <th scope="row">Title</th>
+            <td>{{ listing.title }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Brand</th>
+            <td>{{ listing.brand }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Description</th>
+            <td>{{ listing.description }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Picture</th>
+            <td><img src="{{ listing.url }}" alt="{{ listing.url }}"></td>
+        </tr>
+        <tr>
+            <th scope="row">Category</th>
+            <td><a href="{% url 'category' listing.category %}">{{ listing.category }}</a></td>
+        </tr>
+        <tr>
+            <th scope="row">Price</th>
+            <td>$ {{ listing.start_bid }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Status</th>
+            <td>{{ listing.status }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Seller</th>
+            <td>{{ listing.username }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Comments</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Author</th>
+            <th scope="col">Date</th>
+            <th scope="col">Comment</th>
+
+        </tr>
+    </thead>
+    <tbody>
+    {% for comment in comments %}
+        <tr>
+            <th scope="row">{{comment.author}}</th>
+            <td>{{comment.date}}</td>
+            <td>{{comment.text}}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% if user.is_authenticated %}
+<h3>Leave a comment as "{{request.user}}"</h3>
+<form action="{% url 'listing' listing_id=1 %}" method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <textarea class="form-control" id="comment" name="comment" type="text" placeholder="Type your comment here..." rows="3"></textarea>
+    </div>
+    <button class="btn btn-primary" type="submit" value="Save">Submit Comment</button>
+</form>
+{% else %}
+<h3>Log in to leave a comment</h3>
+{% endif %}
+
+
+{% endblock %}
