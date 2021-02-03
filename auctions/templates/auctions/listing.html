@@ -16,16 +16,19 @@
                 <a class="nav-link" href="{% url 'manage_watchlist' listing_id=listing.id %}">Add to watchlist</a>
             </li>
         {% endif %}
-        {% if not author and open %}
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'register' %}">Bid on this item</a>
-            </li>
-        {% endif %}
         {% if author and open %}
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'close' listing_id=listing.id %}">Close this bid</a>
             </li>
         {% endif %}
+        {% if not author and open %}
+            <li class="nav-item">
+                <a class="nav-link" href="#bid">Place a bid</a>
+            </li>
+        {% endif %}
+        <li class="nav-item">
+            <a class="nav-link" href="#comment">Comment</a>
+        </li>
     {% else %}
         <li class="nav-item">
             <a class="nav-link" href="{% url 'register' %}">Register</a>
@@ -70,6 +73,29 @@
     </tbody>
 </table>
 
+<h2 id="bid"> Auction</h2>
+{% if not user.is_authenticated %}
+<h3><i><a href="{% url 'login' %}">Log in</a> to see information and make a bid </i></h3>
+{% elif open %}
+    Highest bidder is <strong>{{highest_bidder}}</strong>.
+    {% if not author%}
+        <h3 id="bid"> Place a bid </h3>
+        <form action="{% url 'place_bid' listing_id=listing.id %}" method="POST">
+            {% csrf_token %}
+            <div class="input-group mb-3">
+                <span class="input-group-text">$</span>
+                <input class="form-control" type="text" name="bid_placed" placeholder="Write bid here...">
+            </div>
+            <div class="input-group mb-3">
+                <button class="btn btn-primary">Submit bid</button>
+            </div>
+        </form>
+    {% endif %}
+{% else %}
+    Auction closed. Bid won by <strong>{{listing.won_bid}}</strong>.
+{% endif %}
+
+
 <h2>Comments</h2>
 <table class="table">
     <thead>
@@ -92,8 +118,8 @@
 </table>
 
 {% if user.is_authenticated %}
-<h3>Leave a comment as "{{request.user}}"</h3>
-<form action="{% url 'listing' listing_id=1 %}" method="post">
+<h3 id="comment">Leave a comment as "{{request.user}}"</h3>
+<form action="{% url 'listing' listing_id=listing.id %}" method="post">
     {% csrf_token %}
     <div class="form-group">
         <textarea class="form-control" id="comment" name="comment" type="text" placeholder="Type your comment here..." rows="3"></textarea>
@@ -101,7 +127,7 @@
     <button class="btn btn-primary" type="submit" value="Save">Submit Comment</button>
 </form>
 {% else %}
-<h3>Log in to leave a comment</h3>
+<h3><i><a href="{% url 'login' %}">Log in</a> to leave a comment</i></h3>
 {% endif %}
 
 

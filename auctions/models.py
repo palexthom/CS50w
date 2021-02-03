@@ -53,26 +53,13 @@ class Listing(models.Model):
 
 class CommentManager(models.Manager):
     def create_comment(self, author, date, text, listing):
-        print("enter CommentManager")
-        print(author)
-        print(date)
-        print(text)
-        print(listing)
-
-        print("About to create")
         comment = self.create()
-        print("Created")
 
-        print("fill data")
         comment.author = author
         comment.date = date
         comment.text = text
         comment.listing_id = listing
-        print("data filled")
-
-        print('about to save')
         comment.save()
-        print('saved')
 
 
 class Comment(models.Model):
@@ -89,3 +76,23 @@ class Comment(models.Model):
 
 class User(AbstractUser, models.Model, models.Manager):
     watchlist = models.ManyToManyField(Listing, blank=True, related_name="users")
+
+
+class BidManager(models.Manager):
+    def create_bid(self, bidd, listing_id, username):
+        bid = self.create()
+        bid.bid_val = bidd
+        bid.listing_id = Listing.objects.get(id=listing_id)
+        bid.username = username
+        bid.save()
+
+
+class Bid(models.Model):
+    username = models.CharField(max_length=32, null=True, blank=True)
+    listing_id = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bids", null=True, blank=True)
+    bid_val = models.IntegerField(null=True, blank=True)
+
+    objects = BidManager()
+
+    class Meta:
+        ordering = ['-bid_val']

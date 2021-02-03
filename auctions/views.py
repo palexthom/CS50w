@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from .models import User, ListingManager, Listing, Comment
+from .models import User, ListingManager, Listing, Comment, Bid
 from datetime import datetime
 
 
@@ -105,12 +105,23 @@ def listing(request, listing_id):
         listing = Listing.objects.get(id=listing_id)
         comments = Comment.objects.filter(listing_id=listing_id)
 
-        # check if listing belongs to the user
-        author = listing.username == request.user.username
+        # If user authenticated
+        if request.user.is_authenticated:
+            # check if listing belongs to the user
+            is_author = listing.username == request.user.username
 
-        # check if listing is in user's watchlist
-        user = User.objects.get(username=request.user.username)
-        watched_list = user.watchlist.all()
+            # check if listing is in user's watchlist
+            user = User.objects.get(username=request.user.username)
+            watched_list = user.watchlist.all()
+
+            if listing in watched_list:
+                is_watched = True
+            else:
+                is_watched = False
+
+        else:
+            is_watched = False
+            is_author = False
 
         # check if listing is open
         if listing.status == 'O':
@@ -118,22 +129,22 @@ def listing(request, listing_id):
         else:
             is_open = False
 
-        if listing in watched_list:
-            watched = True
+        # look for highest bidder
+        if len(listing.bids.all()) != 0:
+            highest_bidder = listing.bids.all()[0].username
         else:
-            watched = False
+            highest_bidder = "No bid has been made"
 
-        print(f'open : {is_open}')
-        print(f'seller : {author}')
-
-
+        # if listing not None, we return it to the page
         if listing is not None:
             return render(request, "auctions/listing.html", {
                 "listing": listing,
                 "comments": comments,
-                "author": author,
-                "watched": watched,
-                "open": is_open
+                "author": is_author,
+                "watched": is_watched,
+                "open": is_open,
+                # we configured bids to be returned from highest to lowest
+                "highest_bidder": highest_bidder
             })
         else:
             return redirect("index")
@@ -182,3 +193,42 @@ def close(request, listing_id):
 
     return redirect('index')
 
+
+def place_bid(request, listing_id):
+    # javascript should check if bid is higher than minimum
+
+    # get listing and initial bid
+    listing = Listing.objects.get(id=listing_id)
+    highest_bid = listing.start_bid
+
+    # get bids for that listing
+    bids = Bid.objects.filter(listing_id=listing)
+
+    # look for highest bid
+    for bid in bids:
+        print(f"{bid.bid_val} // {highest_bid}")
+        if bid.bid_val > highest_bid:
+            highest_bid = bid.bid_val
+
+    # check if bid placed is higher
+    bid_placed = int(request.POST['bid_placed'])
+    if bid_placed > highest_bid:
+        # save that bid
+        print("Bid Saved")
+        Bid.objects.create_bid(bid_placed, listing_id, request.user.username)
+    else:
+        print("Bid not saved")
+        return apology(request, "Sorry your bid isn't high enough. Do you want to go back to ",
+                       "index",
+                       "index")
+
+    # reload page
+    return redirect('listing', listing_id)
+
+
+def apology(request, msg, link_msg, url):
+    return render(request, 'auctions/apology.html', {
+        "msg": msg,
+        "link_msg": link_msg,
+        "url_name": url
+    })
