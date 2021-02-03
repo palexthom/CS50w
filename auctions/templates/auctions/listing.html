@@ -75,7 +75,7 @@
 
 <h2 id="bid"> Auction</h2>
 {% if not user.is_authenticated %}
-<h3><i><a href="{% url 'login' %}">Log in</a> to see information and make a bid </i></h3>
+<i><a href="{% url 'register' %}">Register</a> or <a href="{% url 'login' %}">log in</a> to see information and make a bid </i>
 {% elif open %}
     Highest bidder is <strong>{{highest_bidder}}</strong>.
     {% if not author%}
@@ -97,6 +97,11 @@
 
 
 <h2>Comments</h2>
+{% if not user.is_authenticated %}
+<div>
+    <i><a href="{% url 'register' %}">Register</a> or <a href="{% url 'login' %}">Log in</a> to leave a comment</i>
+</div>
+{% endif %}
 <table class="table">
     <thead>
         <tr>
@@ -126,8 +131,6 @@
     </div>
     <button class="btn btn-primary" type="submit" value="Save">Submit Comment</button>
 </form>
-{% else %}
-<h3><i><a href="{% url 'login' %}">Log in</a> to leave a comment</i></h3>
 {% endif %}
 
 
