@@ -7,18 +7,20 @@
 
 <ul class="nav">
     {% if user.is_authenticated %}
-        {% if watched %}
+        {% if open and watched %}
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'manage_watchlist' listing_id=listing.id %}">Remove from watchlist</a>
             </li>
-        {% else %}
+        {% elif open %}
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'manage_watchlist' listing_id=listing.id %}">Add to watchlist</a>
             </li>
         {% endif %}
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'register' %}">Bid on this item</a>
-        </li>
+        {% if not author and open %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'register' %}">Bid on this item</a>
+            </li>
+        {% endif %}
         {% if author and open %}
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'close' listing_id=listing.id %}">Close this bid</a>
