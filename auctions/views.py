@@ -4,14 +4,26 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.core.exceptions import ObjectDoesNotExist
 
 from .models import User, ListingManager, Listing, Comment, Bid
+from .helpers import highest_bid, highest_bidder
 from datetime import datetime
 
 
 def index(request):
+    # retrieve all open listings
+    listings = Listing.objects.filter(status='O')
+    print(listings)
+    # retrieve current highest bid
+    listings_with_bids = []
+    for listing in listings:
+        listings_with_bids.append((listing,highest_bid(listing)))
+
+    print(listings_with_bids)
+
     return render(request, "auctions/index.html", {
-        "listings": Listing.objects.filter(status='O')
+        "listings": listings_with_bids
     })
 
 
@@ -102,8 +114,19 @@ def listing(request, listing_id):
         return redirect('listing', listing_id)
 
     else:
-        listing = Listing.objects.get(id=listing_id)
+        try:
+            listing = Listing.objects.get(id=listing_id)
+        except ObjectDoesNotExist:
+            message = "Sorry, there is no listing matching your query."
+            return apology(request,
+                           message,
+                           "Would you like to see ",
+                           "open listings",
+                           "index")
+
         comments = Comment.objects.filter(listing_id=listing_id)
+        is_open = listing.status == 'O'
+        is_buyer = False
 
         # If user authenticated
         if request.user.is_authenticated:
@@ -113,47 +136,52 @@ def listing(request, listing_id):
             # check if listing is in user's watchlist
             user = User.objects.get(username=request.user.username)
             watched_list = user.watchlist.all()
-
             if listing in watched_list:
                 is_watched = True
             else:
                 is_watched = False
 
+            # if listing closed, check if user is buyer
+            if not is_open:
+                is_buyer = listing.won_bid == request.user.username
+
         else:
+            # if user not authenticated, he's no buyer, watching, author
+            print("On passe ici")
             is_watched = False
             is_author = False
+            is_buyer = False
 
-        # check if listing is open
-        if listing.status == 'O':
-            is_open = True
-        else:
-            is_open = False
-
-        # look for highest bidder
-        if len(listing.bids.all()) != 0:
-            highest_bidder = listing.bids.all()[0].username
-        else:
-            highest_bidder = "No bid has been made"
-
-        # if listing not None, we return it to the page
-        if listing is not None:
+        # we show closed listings only to authors and buyers
+        # we show open listings to anyone
+        print(f'open:{is_open};author:{is_author};buyer:{is_buyer}')
+        if (not is_open and (is_author or is_buyer)) or is_open:
             return render(request, "auctions/listing.html", {
                 "listing": listing,
                 "comments": comments,
                 "author": is_author,
                 "watched": is_watched,
                 "open": is_open,
-                # we configured bids to be returned from highest to lowest
-                "highest_bidder": highest_bidder
+                "highest_bid": highest_bid(listing),
+                "highest_bidder": highest_bidder(listing)
             })
         else:
-            return redirect("index")
+            message = "Sorry, we're showing closed listings only to the person who sold it or bought it."
+            return apology(request,
+                           message,
+                           "Would you like to see ",
+                           "open listings",
+                           "index")
 
 
 def category(request, category):
     if request.method == "GET":
+        for cat in Listing.CAT_BIKE:
+            if cat[0] == category:
+                name_cat = cat[1]
+
         return render(request, "auctions/category.html", {
-            "category": category,
+            "category": name_cat,
             "listings": Listing.objects.filter(category=category, status='O')
         })
 
@@ -188,7 +216,7 @@ def close(request, listing_id):
     # recup l'objet listing, changer son statut à close et son won_bid
     listing = Listing.objects.get(id=listing_id)
     listing.status = 'C'
-    listing.won_bid = request.user.username
+    listing.won_bid = highest_bidder(listing)
     listing.save()
 
     return redirect('index')
@@ -211,24 +239,59 @@ def place_bid(request, listing_id):
             highest_bid = bid.bid_val
 
     # check if bid placed is higher
-    bid_placed = int(request.POST['bid_placed'])
+    try:
+        bid_placed = int(request.POST['bid_placed'])
+    except ValueError:
+        return apology(request, "You didn't enter an integer value.",
+                       "Do you want to go back to ",
+                       "listing page",
+                       f'{request.POST["from"]}')
+
     if bid_placed > highest_bid:
         # save that bid
         print("Bid Saved")
         Bid.objects.create_bid(bid_placed, listing_id, request.user.username)
     else:
         print("Bid not saved")
-        return apology(request, "Sorry your bid isn't high enough. Do you want to go back to ",
-                       "index",
-                       "index")
+        return apology(request, "Sorry your bid isn't high enough.",
+                       "Do you want to go back to ",
+                       "listing page",
+                       f'{request.POST["from"]}')
 
     # reload page
     return redirect('listing', listing_id)
 
 
-def apology(request, msg, link_msg, url):
+def apology(request, top, bottom, link_msg, url):
     return render(request, 'auctions/apology.html', {
-        "msg": msg,
+        "top": top,
+        "bottom": bottom,
         "link_msg": link_msg,
         "url_name": url
+    })
+
+
+def categories(request):
+    return render(request, "auctions/categories.html", {
+        "categories": Listing.CAT_BIKE
+    })
+
+
+def my_items(request):
+    username = request.user.username
+    listings_sold = Listing.objects.filter(username=username, status='C')
+    listings_bought = Listing.objects.filter(won_bid=username)
+
+    listings_sold_with_bids = []
+
+    for listing in listings_sold:
+        listings_sold_with_bids.append((listing, highest_bid(listing)))
+
+    listings_bought_with_bids = []
+    for listing in listings_bought:
+        listings_bought_with_bids.append((listing, highest_bid(listing)))
+
+    return render(request, "auctions/myitems.html", {
+        "listings_sold": listings_sold_with_bids,
+        "listings_bought": listings_bought_with_bids
     })

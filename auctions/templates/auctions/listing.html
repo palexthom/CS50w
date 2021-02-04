@@ -1,7 +1,6 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-
 <h2> {{listing.brand}} - {{listing.title}} {% if not open %} [Closed - bid won by '{{listing.won_bid}}'] {% endif %}</h2>
 
 
@@ -56,11 +55,15 @@
         </tr>
         <tr>
             <th scope="row">Category</th>
-            <td><a href="{% url 'category' listing.category %}">{{ listing.category }}</a></td>
+            <td><a href="{% url 'category' listing.category %}">{{ listing.get_category_display }}</a></td>
         </tr>
         <tr>
-            <th scope="row">Price</th>
+            <th scope="row">Initial Price</th>
             <td>$ {{ listing.start_bid }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Current Price</th>
+            <td>$ {{ highest_bid }}</td>
         </tr>
         <tr>
             <th scope="row">Status</th>
@@ -84,12 +87,17 @@
             {% csrf_token %}
             <div class="input-group mb-3">
                 <span class="input-group-text">$</span>
-                <input class="form-control" type="text" name="bid_placed" placeholder="Write bid here...">
+                <input class="form-control" type="text" name="bid_placed" placeholder="Write bid here..." required>
             </div>
             <div class="input-group mb-3">
                 <button class="btn btn-primary">Submit bid</button>
             </div>
+            <input type="hidden" name="from" value="{{request.path}}">
         </form>
+    {% else %}
+        <div>
+            You can't place a bid on your own items. Do you want to <a href="{% url 'close' listing_id=listing.id %}">close this bid<a/> ?
+        </div>
     {% endif %}
 {% else %}
     Auction closed. Bid won by <strong>{{listing.won_bid}}</strong>.
@@ -122,7 +130,7 @@
     </tbody>
 </table>
 
-{% if user.is_authenticated %}
+{% if user.is_authenticated and open %}
 <h3 id="comment">Leave a comment as "{{request.user}}"</h3>
 <form action="{% url 'listing' listing_id=listing.id %}" method="post">
     {% csrf_token %}
@@ -131,7 +139,7 @@
     </div>
     <button class="btn btn-primary" type="submit" value="Save">Submit Comment</button>
 </form>
+{% elif not open %}
+    <h3> You can't leave a comment on a closed auction.</h3>
 {% endif %}
-
-
 {% endblock %}

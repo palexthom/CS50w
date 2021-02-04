@@ -14,37 +14,54 @@
     </head>
     <body>
         <h1> Bike Auctions</h1>
-        <div>
-            {% if user.is_authenticated %}
-                Signed in as <strong>{{ user.username }}</strong>.
-            {% else %}
-                Not signed in.
-            {% endif %}
-        </div>
-        <ul class="nav">
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'index' %}">Active Listings</a>
-            </li>
-            {% if user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'create' %}">Create Listing</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'watchlist' %}">My watchlist</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
-                </li>
-            {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'login' %}">Log In</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'register' %}">Register</a>
-                </li>
-            {% endif %}
-        </ul>
-        <hr>
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark border">
+            <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbar" data-toggle="collapse" type="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'index' %}">Active Listings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'categories' %}">Categories</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'create' %}">Create Listing</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'watchlist' %}">My watchlist</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'my_items' %}">My Items</a>
+                        </li>
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav mr-0">
+                    {% if user.is_authenticated %}
+                    <li class="nav-link"><i>Signed in as <strong>{{ user.username }}</strong>.</i></li>
+                        {% if user.username == "admin" %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="admin/">Admin</a>
+                            </li>
+                        {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-link"><i>Not signed in.</i></li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Log In</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Register</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+
         {% block body %}
         {% endblock %}
     </body>

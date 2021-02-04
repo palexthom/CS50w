@@ -1,33 +1,34 @@
 {% extends "auctions/layout.html" %}
 
+
 {% block body %}
     <h2>Create Listing</h2>
 
-    <form action="{% url 'create' %}" method="post">
+    <form name="create" action="{% url 'create' %}" onsubmit="return validateForm()" method="post">
         {% csrf_token %}
         <div class="form-group">
-            <input class="form-control" autofocus type="text" name="title" placeholder="Title">
+            <input class="form-control" autofocus type="text" name="title" placeholder="Title" required>
         </div>
         <div class="form-group">
-            <input class="form-control" type="text" name="brand" placeholder="Brand">
+            <input class="form-control" type="text" name="brand" placeholder="Brand" required>
         </div>
         <div class="form-group">
-            <input class="form-control" type="text" name="description" placeholder="Description">
+            <input class="form-control" type="text" name="description" placeholder="Description" required>
         </div>
         <div class="form-group">
-            <input class="form-control" type="number" name="start_bid" placeholder="Starting bid">
+            <input class="form-control" type="number" name="start_bid" placeholder="Starting bid" required>
         </div>
         <div class="form-group">
             <input class="form-control" type="url" name="pic_url" placeholder="Picture URL">
         </div>
         <div class="form-group">
             <select class="form-control" id="category" name="cat">
-                <option value="R">Road</option>
-                <option value="T">Touring</option>
-                <option value="G">Gravel</option>
-                <option value="F">Fixed</option>
+                {% for cat in CAT_BIKES %}
+                    <option value={{cat.0}}>{{cat.1}}</option>
+                {% endfor %}
             </select>
         </div>
         <button class="btn btn-primary" type="submit" value="Save">Create New Listing</button>
     </form>
+
 {% endblock %}

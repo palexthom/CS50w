@@ -1,8 +1,9 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h3 class="text-center">{{msg}}<a href="{% url url_name %}" >{{link_msg}}</a> ?</h3>
+    <h3 class="text-center">{{top}}</h3>
     <div>
         <img src="/static/wrecked.png" class="rounded mx-auto d-block" alt="wrecked-bike">
     </div>
+    <h3 class="text-center">{{bottom}}<a href="{{url_name}}" >{{link_msg}}</a> ?</h3>
 {% endblock %}

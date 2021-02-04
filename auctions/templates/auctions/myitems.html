@@ -1,0 +1,62 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Items I sold</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Brand</th>
+                <th scope="col">Description</th>
+                <th scope="col">Picture</th>
+                <th scope="col">Category</th>
+                <th scope="col">Initial Price</th>
+                <th scope="col">Price Sold</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for listing in listings_sold %}
+            <tr>
+                <td><a href="{% url 'listing' listing.0.id %}">{{ listing.0.title }}</a></td>
+                <td>{{ listing.0.brand }}</td>
+                <td>{{ listing.0.description }}</td>
+                <td><img src="{{ listing.0.url }}" alt="{{ listing.0.url }}"></td>
+                <td><a href="{% url 'category' category=listing.0.category %}">{{ listing.0.get_category_display }}</a></td>
+                <td>{{ listing.0.start_bid }}</td>
+                <td>{{ listing.1 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+    <h2>Items I bought</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Brand</th>
+                <th scope="col">Description</th>
+                <th scope="col">Picture</th>
+                <th scope="col">Category</th>
+                <th scope="col">Initial Price</th>
+                <th scope="col">Price Bought</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for listing in listings_bought %}
+            <tr>
+                <td><a href="{% url 'listing' listing.0.id %}">{{ listing.0.title }}</a></td>
+                <td>{{ listing.0.brand }}</td>
+                <td>{{ listing.0.description }}</td>
+                <td><img src="{{ listing.0.url }}" alt="{{ listing.0.url }}"></td>
+                <td><a href="{% url 'category' category=listing.0.category %}">{{ listing.0.get_category_display }}</a></td>
+                <td>{{ listing.0.start_bid }}</td>
+                <td>{{ listing.1 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+{% endblock %}
