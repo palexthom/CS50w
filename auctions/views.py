@@ -14,7 +14,6 @@ from datetime import datetime
 def index(request):
     # retrieve all open listings
     listings = Listing.objects.filter(status='O')
-    print(listings)
     # retrieve current highest bid
     listings_with_bids = []
     for listing in listings:
@@ -90,7 +89,7 @@ def create(request):
                         'pic_url': request.POST["pic_url"],
                         'cat': request.POST["cat"],
                         'username': 'admin',
-                        'status': "open"}
+                        'status': "O"}
 
         Listing.objects.create_listing(data_listing)
         return redirect('index')
@@ -111,7 +110,10 @@ def listing(request, listing_id):
                                        request.POST['comment'],
                                        listing)
 
-        return redirect('listing', listing_id)
+        redir_link = f'{"/listing"}/{listing_id}#comment'
+        print(redir_link)
+        # return redirect('listing', listing_id)
+        return redirect(redir_link)
 
     else:
         try:
@@ -256,10 +258,13 @@ def place_bid(request, listing_id):
         return apology(request, "Sorry your bid isn't high enough.",
                        "Do you want to go back to ",
                        "listing page",
-                       f'{request.POST["from"]}')
+                       f'{request.POST["from"]}#bid')
 
     # reload page
-    return redirect('listing', listing_id)
+    redir_link = f'{"/listing"}/{listing_id}#bid'
+    print(redir_link)
+    #return redirect('listing', listing_id)
+    return redirect(redir_link)
 
 
 def apology(request, top, bottom, link_msg, url):
@@ -272,8 +277,13 @@ def apology(request, top, bottom, link_msg, url):
 
 
 def categories(request):
+    # count open positions for each category
+    cat_and_count = []
+    for cat in Listing.CAT_BIKE:
+        cat_and_count.append((cat, len(Listing.objects.filter(category=cat[0], status='O'))))
+
     return render(request, "auctions/categories.html", {
-        "categories": Listing.CAT_BIKE
+        "categories": cat_and_count
     })
 
 

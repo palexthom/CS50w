@@ -20,7 +20,7 @@
                 <td>{{ listing.brand }}</td>
                 <td>{{ listing.description }}</td>
                 <td><img src="{{ listing.url }}" alt="{{ listing.url }}"></td>
-                <td><a href="{% url 'category' listing.category %}">{{ listing.category }}</a></td>
+                <td><a href="{% url 'category' listing.category %}">{{ listing.get_category_display }}</a></td>
                 <td>{{ listing.start_bid }}</td>
 
             </tr>

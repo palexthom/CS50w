@@ -10,9 +10,13 @@ class BidAdmin(admin.ModelAdmin):
     list_display = ("listing_id","username", "bid_val")
 
 
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ("listing_id", "author", "text")
+
+
 # Register your models here.
 admin.site.register(User)
 admin.site.register(Listing, ListingAdmin)
-admin.site.register(Comment)
+admin.site.register(Comment, CommentAdmin)
 admin.site.register(Bid, BidAdmin)
 

@@ -3,10 +3,12 @@ from .models import Listing, Bid
 
 def highest_bid(listing: Listing):
     # returns highest bid for listing in parameter
+    # if there's no bid, highest bid is the initial price
     if len(listing.bids.all()) > 0:
         return listing.bids.all()[0].bid_val
     else:
-        return 0
+        # if there's no bid, highest bid is the initial price
+        return listing.start_bid
 
 
 def highest_bidder(listing: Listing):
