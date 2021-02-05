@@ -1,33 +1,35 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Active Listings</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">Title</th>
-                <th scope="col">Brand</th>
-                <th scope="col">Description</th>
-                <th scope="col">Picture</th>
-                <th scope="col">Category</th>
-                <th scope="col">Price</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for listing in listings %}
-            <tr>
-                <td><a href="{% url 'listing' listing.id %}">{{ listing.title }}</a></td>
-                <td>{{ listing.brand }}</td>
-                <td>{{ listing.description }}</td>
-                <td><img src="{{ listing.url }}" alt="{{ listing.url }}"></td>
-                <td><a href="{% url 'category' listing.category %}">{{ listing.get_category_display }}</a></td>
-                <td>{{ listing.start_bid }}</td>
 
-            </tr>
-            {% endfor %}
-        </tbody>
-
-    </table>
-
+    {% for group in listings %}
+        <h2> {{ group.0 }} </h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Brand</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Picture</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Initial Price</th>
+                    <th scope="col">Price Sold</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for listing in group.1 %}
+                <tr>
+                    <td><a href="{% url 'listing' listing.0.id %}">{{ listing.0.title }}</a></td>
+                    <td>{{ listing.0.brand }}</td>
+                    <td>{{ listing.0.description }}</td>
+                    <td><img src="{{ listing.0.url }}" alt="{{ listing.0.url }}"></td>
+                    <td><a href="{% url 'category' category=listing.0.category %}">{{ listing.0.get_category_display }}</a></td>
+                    <td>{{ listing.0.start_bid }}</td>
+                    <td>{{ listing.1 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endfor %}
 
 {% endblock %}

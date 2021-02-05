@@ -202,15 +202,38 @@ def manage_watchlist(request, listing_id):
 
 
 def watchlist(request):
-    watched = []
-    users = User.objects.all()
-    uname = request.user.username
-    for user in users:
-        if uname == user.username:
-            watched = user.watchlist.all()
+
+    username = request.user.username
+    listings_interested = User.objects.get(username=username).watchlist.all()
+    listings_selling = Listing.objects.filter(username=username, status='O')
+    listings_sold = Listing.objects.filter(username=username, status='C')
+    listings_bought = Listing.objects.filter(won_bid=username)
+
+    listings = []
+
+    listings_interested_with_bids = []
+    for listing in listings_interested:
+        listings_interested_with_bids.append((listing, highest_bid(listing)))
+
+    listings_selling_with_bids = []
+    for listing in listings_selling:
+        listings_selling_with_bids.append((listing, highest_bid(listing)))
+
+    listings_sold_with_bids = []
+    for listing in listings_sold:
+        listings_sold_with_bids.append((listing, highest_bid(listing)))
+
+    listings_bought_with_bids = []
+    for listing in listings_bought:
+        listings_bought_with_bids.append((listing, highest_bid(listing)))
+
+    listings = [("Items I'm interested in", listings_interested_with_bids),
+                ("Items I've bought", listings_bought_with_bids),
+                ("Items I'm selling", listings_selling_with_bids),
+                ("Items I sold", listings_sold_with_bids)]
 
     return render(request, "auctions/watched.html", {
-        "listings": watched
+        "listings": listings
     })
 
 
@@ -284,24 +307,4 @@ def categories(request):
 
     return render(request, "auctions/categories.html", {
         "categories": cat_and_count
-    })
-
-
-def my_items(request):
-    username = request.user.username
-    listings_sold = Listing.objects.filter(username=username, status='C')
-    listings_bought = Listing.objects.filter(won_bid=username)
-
-    listings_sold_with_bids = []
-
-    for listing in listings_sold:
-        listings_sold_with_bids.append((listing, highest_bid(listing)))
-
-    listings_bought_with_bids = []
-    for listing in listings_bought:
-        listings_bought_with_bids.append((listing, highest_bid(listing)))
-
-    return render(request, "auctions/myitems.html", {
-        "listings_sold": listings_sold_with_bids,
-        "listings_bought": listings_bought_with_bids
     })
