@@ -2,8 +2,21 @@
 
 {% block body %}
 
+    <!-- Watchlist Menu
+    <h1> My watchlist : </h1>
+    <div class="container-sm ml-2">
+        <ul class="list-group list-group-flush">
+            {% for group in listings %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="">{{group.0}}</a>
+            </li>
+            {% endfor%}
+        </ul>
+    </div> -->
+
+
     {% for group in listings %}
-        <h2> {{ group.0 }} </h2>
+        <h3> {{ group.0 }} </h3>
         <table class="table">
             <thead>
                 <tr>
