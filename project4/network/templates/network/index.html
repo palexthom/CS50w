@@ -1,0 +1,84 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+    {% if user.is_authenticated %}
+    <!-- SHOULD ONLY BE SHOWED IF ON INDEX OR USER PAGE -->
+        <div id="compose-view" class="m-2">
+            <h3> Post a new message </h3>
+            <form id="post-compose" onsubmit="return false">
+                <div class="form-group">
+                    <textarea id="post-body" class="form-control"></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="submit" id="post-submit" class="btn btn-primary my-2" value="Send Post">
+                </div>
+            </form>
+        </div>
+
+        <div id="user-info">
+            <h3>Here are user infos for "{{ profile_name }}"</h3>
+            <div>Followers : {{ followers }} // Following : {{ following }}</div>
+            <input type="hidden" id="is-following" value={{ is_following }}>
+            <input type="hidden" id="username" value={{ user.username }}>
+            <input type="hidden" id="profile-name" value={{ profile_name }}>
+
+
+            <div>
+                <button type="button" class="btn btn-primary m-2" id="follow" onclick="follow()">Follow</button>
+                <button type="button" class="btn btn-primary m-2" id="unfollow" onclick="unfollow()">Unfollow</button>
+                <input type="hidden" id="url-follow" data-url="/follow/{{ profile_name }}"/>
+                <input type="hidden" id="url-unfollow" data-url="/unfollow/{{ profile_name }}"/>
+            </div>
+
+        </div>
+
+
+        <div id="feed">
+            <h3>Feed</h3>
+            {% for post in page_obj %}
+            <div class='border border-dark rounded p-2 m-2 bg-white'>
+                <div>{{post.body}}</div>
+                <div>
+                    {{post.timestamp}} — <a href="{% url 'user' post.author %}">{{ post.author }}</a> – Likes : {{ post.likes }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <nav aria-label="...">
+          <ul class="pagination">
+              {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
+              {% endif %}
+              {% if page_obj.has_previous or page_obj.has_next %}
+                <li class="page-item active" aria-current="page">
+                    <span class="page-link">
+                        {{ page_obj.number }}
+                        <span class="sr-only">(current)</span>
+                    </span>
+                </li>
+              {% endif%}
+              {% if page_obj.has_next %}
+
+              <li class="page-item">
+                 <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+              </li>
+              {% endif %}
+          </ul>
+
+
+
+
+        </nav>
+
+{% endif %}
+
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/index.js' %}"></script>
+{% endblock %}
