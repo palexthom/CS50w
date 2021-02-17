@@ -39,9 +39,14 @@
             <h3>Feed</h3>
             {% for post in page_obj %}
             <div class='border border-dark rounded p-2 m-2 bg-white'>
-                <div>{{post.body}}</div>
+                <div id="{{post.0.id}}">{{post.0.body}}</div>
                 <div>
-                    {{post.timestamp}} — <a href="{% url 'user' post.author %}">{{ post.author }}</a> – Likes : {{ post.likes }}
+                    <small>Posted on {{post.0.timestamp}} by <a href="{% url 'user' post.0.author %}">{{ post.0.author }}</a> – <span id="likenr-{{post.0.id}}">{{post.0.likes.count}}</span> Like(s) —</small>
+                    {% if post.1 %}
+                        <small><a id="like-{{post.0.id}}" href="#" onclick=on_like({{post.0.id}})>Unlike</a> — <a href="#" onclick=on_edit({{post.0.id}})>Edit</a></small>
+                    {% else %}
+                        <small><a id="like-{{post.0.id}}" href="#" onclick=on_like({{post.0.id}})>Like</a> — <a href="#" onclick=on_edit({{post.0.id}})>Edit</a></small>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}
@@ -69,9 +74,6 @@
               </li>
               {% endif %}
           </ul>
-
-
-
 
         </nav>
 

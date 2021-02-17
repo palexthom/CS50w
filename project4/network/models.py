@@ -3,14 +3,14 @@ from django.db import models
 
 
 class User(AbstractUser):
-    following = models.ManyToManyField("User", related_name="followers", blank=True, null=True)
+    following = models.ManyToManyField("User", related_name="followers", blank=True)
 
 
 class Post(models.Model):
     author = models.ForeignKey("User", on_delete=models.CASCADE, related_name="posts", blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     body = models.TextField(blank=True)
-    likes = models.IntegerField(default=0)
+    likes = models.ManyToManyField("User", related_name="likers", blank=True)
 
     def serialize(self):
         return {

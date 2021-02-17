@@ -94,6 +94,61 @@ function unfollow(){
 
 }
 
+function on_edit(contents){
+    console.log("J'ai cliqué")
+    console.log(contents)
+    const div = document.getElementById(contents)
+    var body = div.innerHTML
+    div.innerHTML = `<textarea class="form-control" id="compose-${contents}">${body}</textarea><button class="btn btn-primary my-2" onclick="update_post(${contents})">Update</button>`
+}
+
+function on_like(contents){
+    console.log("Someone liked/unliked")
+    console.log
+    var anchor = document.getElementById(`like-${contents}`)
+    var likes = document.getElementById(`likenr-${contents}`)
+    var likesnr = parseInt(document.getElementById(`likenr-${contents}`).innerHTML)
+    console.log(anchor.innerHTML)
+    fetch(`/like/${contents}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+         liked: "unliked"
+      })
+    })
+    console.log(anchor.innerHTML)
+    if (anchor.innerHTML == "Like"){
+        anchor.innerHTML = "Unlike"
+        likes.innerHTML = likesnr + 1
+        console.log("Should be updated")
+    }
+    else{
+        anchor.innerHTML = "Like"
+        likes.innerHTML = likesnr - 1
+        console.log("Should be updated")
+    }
+}
+
+
+function update_post(contents){
+    console.log("Updating post")
+    console.log(contents)
+    console.log(document.getElementById(`compose-${contents}`).value)
+    fetch(`/edit/${contents}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+         body: document.getElementById(`compose-${contents}`).value
+      })
+    })
+    .then(response => {
+        console.log(response.status)
+        if (response.status != 204){
+            alert('could not update post')
+        }
+    })
+    .then(window.location.reload());
+}
+
+
 
 
 

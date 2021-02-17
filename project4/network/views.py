@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 from django.views.generic import ListView
+from django.core.exceptions import ObjectDoesNotExist
 
 from .models import User, Post
 
@@ -116,12 +117,70 @@ def posts(request):
     # Order posts
     print("Let's order posts")
     posts = posts.order_by("-timestamp").all()
-    paginator = Paginator(posts, 10)
+    print(posts)
+
+    posts_with_like = []
+    # For each post, we need to know if user has liked or not
+    for post in posts:
+        likers = [user for user in post.likes.all()]
+        print(likers)
+        print(request.user in likers)
+        posts_with_like.append((post, request.user in likers))
+
+    paginator = Paginator(posts_with_like, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
     print("Let's render homepage")
     return render(request, "network/index.html", {'page_obj': page_obj})
+
+
+@csrf_exempt
+@login_required
+def edit(request, post_id):
+    # if user is author and request is PUT, edit the post
+    if request.method == "PUT":
+        try:
+            post = Post.objects.get(id=post_id)
+        except ObjectDoesNotExist:
+            return JsonResponse({"error": "Post not found."}, status=404, safe=False)
+
+        print(post.author)
+        print(request.user)
+        if post.author == request.user:
+            data = json.loads(request.body)
+            if data.get("body") is not None:
+                post.body = data["body"]
+                post.save()
+                return HttpResponse(status=204)
+            else:
+                return JsonResponse({
+                    "error": "Post content cannot be empty."
+                }, status=400)
+        else:
+            return JsonResponse({
+                "error": "Only author can edit his posts"
+            }, status=400)
+
+    else:
+        return JsonResponse({"error": "Request must be PUT"}, status=404, safe=False)
+
+@csrf_exempt
+@login_required
+def like(request, post_id):
+    # if user in likelist, we remove it, otherwise add it
+    if request.method == "PUT":
+        try:
+            post = Post.objects.get(id=post_id)
+        except ObjectDoesNotExist:
+            return JsonResponse({"error": "Post not found."}, status=404, safe=False)
+
+        if request.user in post.likes.all():
+            post.likes.remove(request.user)
+        else:
+            post.likes.add(request.user)
+        post.save()
+        return HttpResponse(status=204)
 
 
 def following(request):
@@ -146,7 +205,16 @@ def following(request):
     # Order posts
     print("Let's order posts")
     posts = posts.order_by("-timestamp").all()
-    paginator = Paginator(posts, 10)
+
+    posts_with_like = []
+    # For each post, we need to know if user has liked or not
+    for post in posts:
+        likers = [user for user in post.likes.all()]
+        print(likers)
+        print(request.user in likers)
+        posts_with_like.append((post, request.user in likers))
+
+    paginator = Paginator(posts_with_like, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -187,7 +255,16 @@ def user(request, user_name):
         # Order posts
         print("Let's order posts")
         posts = posts.order_by("-timestamp").all()
-        paginator = Paginator(posts, 10)
+
+        posts_with_like = []
+        # For each post, we need to know if user has liked or not
+        for post in posts:
+            likers = [user for user in post.likes.all()]
+            print(likers)
+            print(request.user in likers)
+            posts_with_like.append((post, request.user in likers))
+
+        paginator = Paginator(posts_with_like, 10)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
