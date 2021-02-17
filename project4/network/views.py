@@ -19,7 +19,7 @@ class PostList(ListView):
 
 
 def index(request):
-    return posts(request)
+    return redirect('posts')
 
 
 def login_view(request):
@@ -105,8 +105,6 @@ def compose(request):
 
 
 def posts(request):
-    print("Views : entering posts")
-    print("Views : getting all posts")
     posts = Post.objects.all()
 
     # else that's an error
@@ -242,6 +240,8 @@ def user(request, user_name):
         if user_name in usernames:
             print(f"Let's get the content from {user_name}")
             posts = Post.objects.filter(author=User.objects.get(username=user_name))
+            posts_number = posts.all().count()
+            print(f"posts_number : {posts_number}")
             following = [user.username for user in user.following.all()]
             followers = [user.username for user in user.followers.all()]
             nb_following = len(following)
@@ -249,29 +249,25 @@ def user(request, user_name):
 
         # else that's an error
         else:
-            print("Je passe dans l'erreur")
             return JsonResponse({"error": "Invalid user."}, status=400)
 
         # Order posts
-        print("Let's order posts")
         posts = posts.order_by("-timestamp").all()
 
         posts_with_like = []
         # For each post, we need to know if user has liked or not
         for post in posts:
             likers = [user for user in post.likes.all()]
-            print(likers)
-            print(request.user in likers)
             posts_with_like.append((post, request.user in likers))
 
         paginator = Paginator(posts_with_like, 10)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
-        print("Let's render userpage")
         return render(request, "network/index.html", {
             'page_obj': page_obj,
             "profile_name": user_name,
+            "posts_number": posts_number,
             "following": nb_following,
             "followers": nb_followers,
             "is_following": request.user.username in followers

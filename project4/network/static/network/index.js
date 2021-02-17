@@ -40,16 +40,20 @@ function send_post(){
             body: document.getElementById("post-body").value
         })
       })
-      .then(response => response.json())
+      .then(response => {
+        console.log("et la ");
+        response.json();
+      })
       .then(result => {
         // Print result
         console.log(result);
+        console.log("ici");
       })
-      .then(
-        location.reload()
-      )
+      .then(() => {
+        console.log("Let's redirect to homepage")
+        document.location.href="/";
+      })
 }
-
 
 function add_post(contents) {
     // creates a new post in a div
@@ -80,7 +84,6 @@ function follow_button() {
     }
 }
 
-
 function follow(){
     console.log("Click on follow")
     console.log(document.querySelector("#url-follow").dataset.url)
@@ -95,7 +98,7 @@ function unfollow(){
 }
 
 function on_edit(contents){
-    console.log("J'ai cliqué")
+    console.log("Click on edit button")
     console.log(contents)
     const div = document.getElementById(contents)
     var body = div.innerHTML
@@ -128,7 +131,6 @@ function on_like(contents){
     }
 }
 
-
 function update_post(contents){
     console.log("Updating post")
     console.log(contents)
@@ -140,12 +142,14 @@ function update_post(contents){
       })
     })
     .then(response => {
-        console.log(response.status)
+        console.log(response.status);
         if (response.status != 204){
-            alert('could not update post')
+            alert('Could not update post!');
         }
     })
-    .then(window.location.reload());
+    .then(() => {
+        window.location.reload();
+    });
 }
 
 

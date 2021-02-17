@@ -2,14 +2,13 @@
 {% load static %}
 
 {% block body %}
-
     {% if user.is_authenticated %}
     <!-- SHOULD ONLY BE SHOWED IF ON INDEX OR USER PAGE -->
         <div id="compose-view" class="m-2">
             <h3> Post a new message </h3>
-            <form id="post-compose" onsubmit="return false">
+            <form id="post-compose">
                 <div class="form-group">
-                    <textarea id="post-body" class="form-control"></textarea>
+                    <textarea id="post-body" class="form-control" placeholder="Type here..."></textarea>
                 </div>
                 <div class="form-group">
                     <input type="submit" id="post-submit" class="btn btn-primary my-2" value="Send Post">
@@ -17,9 +16,13 @@
             </form>
         </div>
 
-        <div id="user-info">
-            <h3>Here are user infos for "{{ profile_name }}"</h3>
-            <div>Followers : {{ followers }} // Following : {{ following }}</div>
+        <div class="border border-dark rounded p-2 m-2 bg-white" id="user-info">
+            <h4>User stats for "{{ profile_name }}" : </h4>
+            <ul>
+                <li>Total number of posts : {{ posts_number }}</li>
+                <li>Followers : {{ followers }}</li>
+                <li>Following : {{ following }}</li>
+            </ul>
             <input type="hidden" id="is-following" value={{ is_following }}>
             <input type="hidden" id="username" value={{ user.username }}>
             <input type="hidden" id="profile-name" value={{ profile_name }}>
@@ -35,18 +38,22 @@
         </div>
 
 
-        <div id="feed">
-            <h3>Feed</h3>
+        <div class="m-2" id="feed">
+            <h2>Feed</h2>
             {% for post in page_obj %}
-            <div class='border border-dark rounded p-2 m-2 bg-white'>
+            <div class='border border-dark rounded p-2 my-2 bg-white'>
                 <div id="{{post.0.id}}">{{post.0.body}}</div>
                 <div>
                     <small>Posted on {{post.0.timestamp}} by <a href="{% url 'user' post.0.author %}">{{ post.0.author }}</a> – <span id="likenr-{{post.0.id}}">{{post.0.likes.count}}</span> Like(s) —</small>
                     {% if post.1 %}
-                        <small><a id="like-{{post.0.id}}" href="#" onclick=on_like({{post.0.id}})>Unlike</a> — <a href="#" onclick=on_edit({{post.0.id}})>Edit</a></small>
+                        <small><a id="like-{{post.0.id}}" href="#" onclick=on_like({{post.0.id}})>Unlike</a>
                     {% else %}
-                        <small><a id="like-{{post.0.id}}" href="#" onclick=on_like({{post.0.id}})>Like</a> — <a href="#" onclick=on_edit({{post.0.id}})>Edit</a></small>
+                        <small><a id="like-{{post.0.id}}" href="#" onclick=on_like({{post.0.id}})>Like</a>
                     {% endif %}
+                    {% if post.0.author.username == user.username %}
+                         — <a href="#" onclick=on_edit({{post.0.id}})>Edit</a>
+                    {% endif %}
+                    </small>
                 </div>
             </div>
             {% endfor %}
