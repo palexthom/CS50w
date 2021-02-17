@@ -12,6 +12,7 @@
                 </div>
                 <div class="form-group">
                     <input type="submit" id="post-submit" class="btn btn-primary my-2" value="Send Post">
+                    <button id="post-cancel" class="btn btn-secondary my-2">Cancel</button>
                 </div>
             </form>
         </div>
@@ -42,7 +43,7 @@
             <h2>Feed</h2>
             {% for post in page_obj %}
             <div class='border border-dark rounded p-2 my-2 bg-white'>
-                <div id="{{post.0.id}}">{{post.0.body}}</div>
+                <div class="mb-2" id="{{post.0.id}}">{{post.0.body}}</div>
                 <div>
                     <small>Posted on {{post.0.timestamp}} by <a href="{% url 'user' post.0.author %}">{{ post.0.author }}</a> – <span id="likenr-{{post.0.id}}">{{post.0.likes.count}}</span> Like(s) —</small>
                     {% if post.1 %}

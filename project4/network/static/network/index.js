@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // submit new post
     document.querySelector('#post-submit').addEventListener('click', () => send_post());
 
+    // cancel new post
+    document.querySelector('#post-cancel').addEventListener('click', () => hide_compose_post());
+
     // By default, hide compose post
     hide_compose_post()
 
