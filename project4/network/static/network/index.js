@@ -105,7 +105,8 @@ function on_edit(contents){
     console.log(contents)
     const div = document.getElementById(contents)
     var body = div.innerHTML
-    div.innerHTML = `<textarea class="form-control" id="compose-${contents}">${body}</textarea><button class="btn btn-primary my-2" onclick="update_post(${contents})">Update</button>`
+    div.innerHTML = `<textarea class="form-control" id="compose-${contents}">${body}</textarea>
+                    <button class="btn btn-primary my-2" onclick="update_post(${contents})">Update</button>`
 }
 
 function on_like(contents){
