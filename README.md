@@ -31,10 +31,3 @@ Using Python, JavaScript, HTML, and CSS, complete the implementation  of a socia
 - **“Like” and “Unlike”**: Users should be able to click a button or link on any post to toggle whether or not they “like” that post.    
   
   - Using JavaScript, you should asynchronously let the server know to update the like count (as via a call to `fetch`) and then update the post’s like count displayed on the page, without requiring a reload of the entire page.
-  
-  ## [Hints](https://cs50.harvard.edu/web/2020/projects/4/network/#hints)
-  
-  - For examples of JavaScript `fetch` calls, you may find some of the routes in Project 3 useful to reference.
-  - You’ll likely need to create one or more models in `network/models.py` and/or modify the existing `User` model to store the necessary data for your web application.
-  - Django’s [Paginator](https://docs.djangoproject.com/en/3.0/topics/pagination/) class may be helpful for implementing pagination on the back-end (in your Python code).
-  - Bootstrap’s [Pagination](https://getbootstrap.com/docs/4.4/components/pagination/) features may be helpful for displaying pages on the front-end (in your HTML).
