@@ -9,3 +9,4 @@ Each branch in this repository is a project from this class, and each has a read
 * [wiki](https://github.com/palexthom/cs50w/tree/wiki) - ([video](https://youtu.be/fm_bnGqfsE8))
 * [commerce](https://github.com/palexthom/cs50w/tree/commerce) - ([video](https://youtu.be/ZuHu6FfZNmE))
 * [mail](https://github.com/palexthom/CS50w/tree/mail) - ([video](https://youtu.be/GTFex32n5mE))
+* [network](https://github.com/palexthom/CS50w/tree/network) - ([video](https://youtu.be/RTD0x7y9hn0))
